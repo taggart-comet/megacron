@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: megacron-config
 data:
-  SERVER_PROBES_PORT: "{{ .Values.server.probesPort | default 8080 }}"
+  SERVER_PROBES_PORT: "{{ .Values.probesPort | default 8080 }}"
   RUNNER_BINARY_PATH: /runner
   RUNNER_BINARY_WORK_PATH: /megacron/runner
   PROMETHEUS_PUSH_ENABLED: "{{ (.Values.prometheusPush).enabled | default false }}"
