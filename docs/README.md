@@ -1,0 +1,1 @@
+#### HelmChart for github.com/taggart-comet/megacron to run multiple cronjobs in Kubernetes
