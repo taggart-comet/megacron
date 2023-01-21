@@ -1,0 +1,88 @@
+{{- range $cronjob := $.Values.cronJobs }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ $cronjob.name }}
+spec:
+  schedule: "{{ $cronjob.schedule }}"
+  concurrencyPolicy: {{ $cronjob.concurrencyPolicy | default "Forbid" }}
+  startingDeadlineSeconds: {{ (.Values).startingDeadlineSeconds | default 60 }}
+  successfulJobsHistoryLimit: {{ (.Values).successfulJobsHistoryLimit | default 1 }}
+  failedJobsHistoryLimit: {{ (.Values).failedJobsHistoryLimit | default 3 }}
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: {{ (.Values).ttlSecondsAfterFinished | default 1000 }}
+      parallelism: {{ $cronjob.parallelism | default 1 }}
+      completions: {{ $cronjob.completions | default 1 }}
+      backoffLimit: {{ $cronjob.backoffLimit | default 1 }}
+      activeDeadlineSeconds: {{ $cronjob.activeDeadlineSeconds | default 86400 }}
+      template:
+        spec:
+          {{- with $.Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml $cronjob.podSecurityContext | nindent 12 }}
+          containers:
+            - name: {{ (.Chart).Name | default "megacron-cronjob" }}
+              {{ if $cronjob.image }}
+              image: "{{ $cronjob.image }}"
+              {{ else }}
+              image: "{{ $.Values.alwaysRunning.image }}"
+              {{ end }}
+              command:
+                - /megacron/runner
+                - "{{ $cronjob.name | snakecase | upper }}"
+              {{- with $cronjob.resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              volumeMounts:
+                - mountPath: /megacron
+                  name: megacron-shared-volume
+              {{- with $cronjob.volumeMounts }}
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              envFrom:
+                - configMapRef:
+                    name: megacron-config
+              {{- with $.Values.envsFrom }}
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              livenessProbe:
+                httpGet:
+                  port: {{ $.Values.probesPort | default 8080 }}
+                  path: /readiness
+                failureThreshold: 1
+                initialDelaySeconds: 1
+                periodSeconds: 1
+                timeoutSeconds: 1
+              readinessProbe:
+                httpGet:
+                  port: {{ $.Values.probesPort | default 8080 }}
+                  path: /readiness
+                failureThreshold: 5
+                initialDelaySeconds: 2
+                periodSeconds: 5
+                timeoutSeconds: 2
+          initContainers:
+            - name: "megacron-cronjob-init"
+              image: {{ $cronjob.initImage | default "docker.io/taggartcomet/megacron:0.2.0" }}
+              command:
+                - /initial
+              volumeMounts:
+                - mountPath: /megacron
+                  name: megacron-shared-volume
+              envFrom:
+                - configMapRef:
+                    name: megacron-config
+          restartPolicy: Never
+          volumes:
+            - name: megacron-shared-volume
+              emptyDir: {}
+          {{- with $cronjob.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }}

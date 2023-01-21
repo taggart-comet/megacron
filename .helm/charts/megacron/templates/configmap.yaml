@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: megacron-config
+data:
+  SERVER_PROBES_PORT: "{{ .Values.server.probesPort | default 8080 }}"
+  RUNNER_BINARY_PATH: /runner
+  RUNNER_BINARY_WORK_PATH: /megacron/runner
+  PROMETHEUS_PUSH_ENABLED: "{{ (.Values.prometheusPush).enabled | default false }}"
+  PROMETHEUS_PUSH_GATEWAY_URL: {{ (.Values.prometheusPush).gatewayUrl | default "disabled" }}
+  PROMETHEUS_PUSH_GATEWAY_JOB: {{ (.Values.prometheusPush).job | default "disabled" }}
+  ALWAYS_RUNNING_FLAG: ALWAYS_RUNNING_CRONS
+  ALWAYS_RUNNING_CRONS: |
+{{ join "\n" .Values.alwaysRunning.crons | indent 4}}
+{{- range $cronjob := $.Values.cronJobs }}
+{{ $cronjob.name | snakecase | upper | indent 2 }}: |
+{{ join "\n" $cronjob.crons | indent 4}}
+{{- end }}

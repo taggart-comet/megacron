@@ -1,0 +1,14 @@
+
+startingDeadlineSeconds: 60
+ttlSecondsAfterFinished: 100
+successfulJobsHistoryLimit: 1
+failedJobsHistoryLimit: 3
+
+alwaysRunning:
+  enabled: false
+cronJobs: []
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""

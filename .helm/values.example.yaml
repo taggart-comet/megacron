@@ -1,0 +1,37 @@
+
+megacron:
+  alwaysRunning:
+    enabled: true
+    image: busybox:1.28
+    crons:
+      - "* * * * * echo 'always 1'"
+      - "*/2 * * * * echo 'always 2'"
+      - "*/5 * * * * echo 'always 5'"
+
+  cronJobs:
+    - name: "fifteen-minutes-crons"
+      schedule: "*/15 * * * *"
+      image: busybox:1.28
+      crons:
+        - "echo 'fifteen 1'"
+        - "echo 'fifteen 2'"
+        - "echo 'fifteen 3'"
+    - name: "hourly-crons"
+      schedule: "0 */1 * * *"
+      image: busybox:1.28
+      crons:
+        - "echo 'hourly 1'"
+        - "echo 'hourly 2'"
+        - "echo 'hourly 3'"
+    - name: "nightly-crons"
+      schedule: "0 2 * * *"
+      image: busybox:1.28
+      crons:
+        - "echo 'nightly 1'"
+        - "echo 'nightly 2'"
+        - "echo 'nightly 3'"
+
+  prometheusPush:
+    enabled: true
+    gatewayUrl: http://pushgateway:9091
+    job: megacron

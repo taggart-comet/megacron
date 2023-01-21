@@ -1,0 +1,99 @@
+{{- if .Values.alwaysRunning.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.alwaysRunning.name | default "megacron-always-running-crons" }}
+  labels:
+    {{- include "megacron.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.alwaysRunning.replicas | default 1 }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "megacron.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "megacron.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.alwaysRunning.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.alwaysRunning.name | default "megacron-always-running" }}
+          image: "{{ .Values.alwaysRunning.image }}"
+          imagePullPolicy: {{ .Values.alwaysRunning.imagePullPolicy | default "IfNotPresent" }}
+          command:
+            - /megacron/runner
+            - "ALWAYS_RUNNING_CRONS"
+          volumeMounts:
+            - mountPath: /megacron
+              name: megacron-shared-volume
+          {{- with .Values.alwaysRunning.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.alwaysRunning.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: megacron-config
+          {{- with .Values.envsFrom }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              port: {{ .Values.probesPort | default 8080 }}
+              path: /readiness
+            failureThreshold: 1
+            initialDelaySeconds: 1
+            periodSeconds: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              port: {{ .Values.probesPort | default 8080 }}
+              path: /readiness
+            failureThreshold: 5
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            timeoutSeconds: 2
+      initContainers:
+        - name: "megacron-cronjob-init"
+          image: {{ .Values.alwaysRunning.initImage | default "docker.io/taggartcomet/megacron:0.2.0" }}
+          command:
+            - /initial
+          volumeMounts:
+            - mountPath: /megacron
+              name: megacron-shared-volume
+          envFrom:
+            - configMapRef:
+                name: megacron-config
+      volumes:
+        - name: megacron-shared-volume
+          emptyDir: {}
+      {{- with .Values.alwaysRunning.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+{{- end }}
