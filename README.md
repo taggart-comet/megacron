@@ -14,7 +14,7 @@ Waits for crons to finish when shutting down.
 1. Add the chart to your Chart.yaml:
 ```yaml
   - name: megacron
-    version: 1.0.0
+    version: 1.0.2
     repository: "https://taggart-comet.github.io/megacron/"
 ```
 2. Add the chart to your values.yaml:
