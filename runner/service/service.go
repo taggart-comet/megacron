@@ -30,8 +30,8 @@ func (rs RunService) RunOnce(containerName string, commandList string, waitForAl
 
 	runCount := 0
 	for _, command := range commands {
-		functions.Log("Starting command [" + command + "]")
 		if strings.TrimSpace(command) != "" {
+			functions.Log("Starting command [" + command + "]")
 			go func() {
 				defer waitingGroup.Done()
 				rs.Runner.Run(strings.TrimSpace(command), feedBackChannel)

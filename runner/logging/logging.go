@@ -96,6 +96,7 @@ func (l *Logging) TrackMemory(container string) {
 }
 
 // WatchCrons made to run in a goroutine
+// if a cron has not been run for RUNNING_TIMEOUT_MINUTES, it is considered dead
 func (l *Logging) WatchCrons() {
 	for {
 		for command, lastRunTime := range l.commandLastRunList {
