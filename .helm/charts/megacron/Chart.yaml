@@ -1,6 +1,6 @@
 apiVersion: v2
 appVersion: "1.0.0"
-description: Gives you the ability to define lots of cron-jobs in a convenient way
+description: HelmChart for github.com/taggart-comet/megacron to run multiple cronjobs in Kubernetes
 maintainers:
   - name: github.com/taggart-comet
 name: megacron
