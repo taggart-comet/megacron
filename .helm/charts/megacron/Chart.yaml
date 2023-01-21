@@ -4,4 +4,4 @@ description: Gives you the ability to define lots of cron-jobs in a convenient w
 maintainers:
   - name: github.com/taggart-comet
 name: megacron
-version: "1.0.0"
+version: "1.0.1"
