@@ -4,4 +4,4 @@ description: HelmChart for github.com/taggart-comet/megacron to run multiple cro
 maintainers:
   - name: github.com/taggart-comet
 name: megacron
-version: "1.0.1"
+version: "1.0.2"

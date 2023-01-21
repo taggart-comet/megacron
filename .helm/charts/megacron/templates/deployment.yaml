@@ -68,7 +68,7 @@ spec:
             timeoutSeconds: 2
       initContainers:
         - name: "megacron-cronjob-init"
-          image: {{ .Values.alwaysRunning.initImage | default "docker.io/taggartcomet/megacron:0.2.0" }}
+          image: {{ .Values.alwaysRunning.initImage | default "docker.io/taggartcomet/megacron:0.2.1" }}
           command:
             - /initial
           volumeMounts:
