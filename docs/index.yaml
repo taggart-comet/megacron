@@ -3,38 +3,14 @@ entries:
   megacron:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-01-21T22:33:07.309234+05:00"
+    created: "2023-01-22T12:38:38.923851+05:00"
     description: HelmChart for github.com/taggart-comet/megacron to run multiple cronjobs
       in Kubernetes
-    digest: c8dc79d4d01ff338d09d89ba8a0176b4bc4653567854f07f3ef7ade13d563d7b
+    digest: 61c510c5525f022137e4c07d37de32ec0272c6404e1d21e6a59d3dd20d8100b6
     maintainers:
     - name: github.com/taggart-comet
     name: megacron
     urls:
-    - megacron-1.0.2.tgz
-    version: 1.0.2
-  - apiVersion: v2
-    appVersion: 1.0.0
-    created: "2023-01-21T22:33:07.304398+05:00"
-    description: HelmChart for github.com/taggart-comet/megacron to run multiple cronjobs
-      in Kubernetes
-    digest: 39bbb4b4950545cfc535c870e5d79e4e0be7a09fc1e1fb7cec7c753a7ca79759
-    maintainers:
-    - name: github.com/taggart-comet
-    name: megacron
-    urls:
-    - megacron-1.0.1.tgz
-    version: 1.0.1
-  - apiVersion: v2
-    appVersion: 1.0.0
-    created: "2023-01-21T22:33:07.302471+05:00"
-    description: Gives you the ability to define lots of cron-jobs in a convenient
-      way
-    digest: e5b6fb4a238a3e808dcf23c2aa54a30d8996537411ac19d49d3755c7c563b9a7
-    maintainers:
-    - name: github.com/taggart-comet
-    name: megacron
-    urls:
-    - megacron-1.0.0.tgz
-    version: 1.0.0
-generated: "2023-01-21T22:33:07.297006+05:00"
+    - megacron-1.0.3.tgz
+    version: 1.0.3
+generated: "2023-01-22T12:38:38.920129+05:00"
