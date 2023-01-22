@@ -7,7 +7,6 @@ import (
 	"megacron/system/functions"
 	"megacron/system/runner"
 	"os"
-	"strings"
 	"sync"
 	"time"
 )
@@ -19,27 +18,24 @@ type RunService struct {
 }
 
 // RunOnce runs a list of commands once
-func (rs RunService) RunOnce(containerName string, commandList string, waitForAll bool) int {
+func (rs *RunService) RunOnce(containerName string, commandList string, waitForAll bool) int {
 
 	go rs.Logging.TrackMemory(containerName)
 	go rs.Logging.WatchCrons()
 
 	var waitingGroup sync.WaitGroup
-	commands := strings.Split(commandList, "\n")
+	commands := functions.SplitString(commandList, "\n")
 	feedBackChannel := make(chan runner.RunResult, len(commands))
 
 	runCount := 0
 	for _, command := range commands {
-		if strings.TrimSpace(command) != "" {
-			functions.Log("Starting command [" + command + "]")
-			go func() {
-				defer waitingGroup.Done()
-				rs.Runner.Run(strings.TrimSpace(command), feedBackChannel)
-			}()
-			runCount++
-		}
+		waitingGroup.Add(1)
+		go func(command string) {
+			defer waitingGroup.Done()
+			rs.Runner.Run(command, feedBackChannel)
+		}(command)
+		runCount++
 	}
-	waitingGroup.Add(runCount)
 	if waitForAll {
 		waitingGroup.Wait()
 	}
@@ -55,7 +51,7 @@ func (rs RunService) RunOnce(containerName string, commandList string, waitForAl
 }
 
 // RunForever runs a list of commands written in crontab format forever
-func (rs RunService) RunForever(cronCommandList string) {
+func (rs *RunService) RunForever(cronCommandList string) {
 
 	go rs.Logging.TrackMemory(os.Getenv("ALWAYS_RUNNING_FLAG"))
 	go rs.Logging.WatchCrons()
@@ -81,7 +77,7 @@ func (rs RunService) RunForever(cronCommandList string) {
 }
 
 // runs a single command forever by given schedule
-func (rs RunService) runBySchedule(
+func (rs *RunService) runBySchedule(
 	scheduledCommand scheduler.CommandSchedule,
 	feedBackChannel chan runner.RunResult,
 ) {

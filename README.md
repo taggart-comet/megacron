@@ -65,4 +65,4 @@ For each container there's an initContainer that puts the executable (`runner`) 
 
 The `runner` runs all the crons inside, tracking their statuses and logging the output of the crons into container's stdout.
 
-By default initContainer uses an image from `docker.io/taggartcomet/megacron:x.x.x`, it's hardcoded into the HelmChart. But can be redefined using `initImage` field.
+By default, initContainer uses an image from `docker.io/taggartcomet/megacron:latest`, it's hardcoded into the HelmChart. But can be redefined using `initImage` field.

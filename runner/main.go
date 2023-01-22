@@ -36,6 +36,5 @@ func main() {
 }
 
 func shouldRunForever(argument string) bool {
-	tt := os.Getenv("ALWAYS_RUNNING_FLAG")
-	return tt == argument
+	return os.Getenv("ALWAYS_RUNNING_FLAG") == argument
 }
