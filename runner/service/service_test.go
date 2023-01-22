@@ -48,6 +48,8 @@ func TestEmergencyBraking(t *testing.T) {
 	loggingInstance := logging.NewLogging(emMock, metricsMock)
 	runnerMock.On("Run", mock.AnythingOfType("string"), mock.Anything).Maybe()
 	emMock.On("ShouldStop").Return(true)
+	emMock.On("Start").Maybe()
+	emMock.On("Stop").Maybe()
 	metricsMock.On("SetMemory", mock.Anything, mock.Anything).Maybe()
 	metricsMock.On("ToggleRunningCron", mock.Anything).Maybe()
 	metricsMock.On("Push", mock.Anything).Maybe()

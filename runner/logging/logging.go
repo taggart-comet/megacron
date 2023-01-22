@@ -5,6 +5,7 @@ import (
 	"megacron/system/functions"
 	"megacron/system/runner"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -68,7 +69,7 @@ func (l *Logging) LogCommandsFromChannelForever(feedBackChannel <-chan runner.Ru
 func (l *Logging) logCommandResult(result runner.RunResult) {
 
 	// passing output to stdout for kubernetes to pick up
-	if result.Output != "" {
+	if strings.TrimSpace(result.Output) != "" {
 		functions.Log(result.Output)
 	}
 
@@ -96,6 +97,7 @@ func (l *Logging) TrackMemory(container string) {
 }
 
 // WatchCrons made to run in a goroutine
+// if a cron has not been run for RUNNING_TIMEOUT_MINUTES, it is considered dead
 func (l *Logging) WatchCrons() {
 	for {
 		for command, lastRunTime := range l.commandLastRunList {

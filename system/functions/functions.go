@@ -27,10 +27,21 @@ func BytesToString(bs []byte) string {
 
 // SplitString splits a string by whitespaces
 func SplitString(stringToSplit string, delimiter string) []string {
+	var parts []string
 	if delimiter == " " {
-		return strings.Fields(stringToSplit)
+		parts = strings.Fields(stringToSplit)
+	} else {
+		parts = strings.Split(stringToSplit, delimiter)
 	}
-	return strings.Split(stringToSplit, delimiter)
+
+	var output []string
+	for _, part := range parts {
+		if strings.TrimSpace(part) != "" {
+			output = append(output, strings.TrimSpace(part))
+		}
+	}
+
+	return output
 }
 
 func CopyFile(src_path string, dst_path string, executable bool) error {
